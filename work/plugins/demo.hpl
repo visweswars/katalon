@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Group-Id: io.jenkins.plugins
+Short-Name: demo
+Long-Name: TODO Plugin
+Plugin-Version: 1.0
+Hudson-Version: 2.7.3
+Jenkins-Version: 2.7.3
+Plugin-Dependencies: structs:1.7
+Plugin-Developers: 
+Libraries: D:\New folder\demo\src\main\resources,D:\New folder\demo\ta
+ rget\classes
+Resource-Path: D:\New folder\demo\src\main\webapp
+
