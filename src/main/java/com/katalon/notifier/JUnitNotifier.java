@@ -42,6 +42,9 @@ public class JUnitNotifier extends Notifier {
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         try{
 
+            listener.getLogger().println();
+
+
             //listener.getLogger().println(hudson.model.Hudson.getInstance().getItems());
 
             listener.getLogger().println("Parsing the test result1");

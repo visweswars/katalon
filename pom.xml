@@ -85,6 +85,14 @@
       <artifactId>jackson-databind</artifactId>
       <version>${jackson.version}</version>
     </dependency>
+      <dependency>
+          <groupId>org.jenkins-ci.main</groupId>
+          <artifactId>jenkins-test-harness</artifactId>
+      </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-test-harness</artifactId>
+    </dependency>
 
   </dependencies>
 
