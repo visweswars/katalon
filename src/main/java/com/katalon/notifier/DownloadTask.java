@@ -5,42 +5,26 @@ import hudson.Launcher;
 import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
-import hudson.tasks.Publisher;
-import hudson.tasks.junit.TestResult;
-import hudson.tasks.junit.TestResultAction;
-import hudson.tasks.test.AggregatedTestResultAction;
-import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
-import org.acegisecurity.Authentication;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.jvnet.hudson.test.TestBuilder;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import javax.servlet.ServletException;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class DownloadTask extends Builder {
-    private File file;
-    private URL url;
     private String version;
 
     @DataBoundConstructor
     public DownloadTask(String version){
-        //String link = "https://download.katalon.com/5.8.0/Katalon_Studio_Windows_64-5.8.0.zip";
-        //File file = new File("D://Download1");
-       System.out.println(version);
        this.version = version;
-       System.out.println(version);
     }
 
     public String getVersion() {
@@ -51,10 +35,10 @@ public class DownloadTask extends Builder {
         this.version = version;
     }
 
-    private static File unpackArchive(URL url, File targetDir) throws IOException{
-        if(!targetDir.exists()){
-            targetDir.mkdirs();
-        }
+    private static File downloadAndExtract(String link, File targetDir) throws IOException{
+        URL url = new URL(link);
+
+        url.openStream();
 
         InputStream in = new BufferedInputStream(url.openStream(), 1024);
         ZipInputStream zIn = new ZipInputStream(in);
@@ -83,7 +67,7 @@ public class DownloadTask extends Builder {
         return targetDir;
     }
 
-    private static void copyInputStream(InputStream in, OutputStream out) throws IOException{
+    private static void copyInputStream(InputStream in, OutputStream out) throws IOException {
         IOUtils.copy(in, out);
         out.close();
     }
@@ -93,25 +77,47 @@ public class DownloadTask extends Builder {
         return file.exists() || file.mkdirs();
     }
 
+    private File getKatalonFolder(){
+
+        //Get user home, but failed. path = "C:\\windows\\system32\\config\\systemprofile\\.katalon\\5.8.0";
+//        String path = System.getProperty("user.home");
+
+        String path = "C:\\Users\\tuananhtran";
+        Path p = Paths.get(path,".katalon", this.version);
+        return p.toFile();
+    }
+
     @Override
     public boolean perform(AbstractBuild<?, ?> abstractBuild, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
-//        try{
-//            unpackArchive(url, file);
-//        } catch (IOException e)
-//        {
-//            e.printStackTrace();
-//        }
+        //String link = "https://download.katalon.com/5.8.0/Katalon_Studio_Windows_64-5.8.0.zip";
+        String link = "https://download.katalon.com/" + this.version + "/Katalon_Studio_Windows_64-" + this.version + ".zip";
+        File katalonDir = getKatalonFolder();
 
-//        unpackArchive(url, file);
+        try {
+            Path fileLog = Paths.get(katalonDir.toString(), ".katalon.done");
+
+            if(fileLog.toFile().exists()){
+                System.out.println("Exists");
+            } else
+            {
+                FileUtils.deleteDirectory(katalonDir);
+
+                katalonDir.mkdirs();
+
+                downloadAndExtract(link, katalonDir);
+
+                fileLog.toFile().createNewFile();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return true;
     }
 
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Builder> { // Publisher because Notifiers are a type of publisher
-//        public FormValidation doCheckName(@QueryParameter String version) throws IOException, ServletException {
-//
-//            return FormValidation.ok();
-//        }
         @Override
         public String getDisplayName() {
             return "Katalon Download Task"; // What people will see as the plugin name in the configs
