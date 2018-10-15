@@ -36,6 +36,8 @@ public class DownloadTask extends Builder {
     }
 
     private static File downloadAndExtract(String link, File targetDir) throws IOException{
+        String nameFileKatalon = getNameKatalonFoler(link);
+
         URL url = new URL(link);
 
         url.openStream();
@@ -43,13 +45,16 @@ public class DownloadTask extends Builder {
         InputStream in = new BufferedInputStream(url.openStream(), 1024);
         ZipInputStream zIn = new ZipInputStream(in);
 
-        return unpackArchive(zIn, targetDir);
+        return unpackArchive(zIn, targetDir, nameFileKatalon);
     }
 
-    private static File unpackArchive(ZipInputStream inputStream, File targetDir) throws IOException{
+    private static File unpackArchive(ZipInputStream inputStream, File targetDir, String nameKatalonFolder) throws IOException{
         ZipEntry entry;
         while((entry = inputStream.getNextEntry()) != null){
-            File file = new File(targetDir, File.separator + entry.getName());
+            String folder = entry.getName().replace(nameKatalonFolder, "");
+            File file = new File(targetDir, File.separator + folder);
+
+            //File file = new File(targetDir, File.separator + entry.getName());
 
             if(!buildDirectory(file.getParentFile())){
                 throw new IOException("Could not create directory: " + file.getParentFile());
@@ -85,6 +90,12 @@ public class DownloadTask extends Builder {
         String path = "C:\\Users\\tuananhtran";
         Path p = Paths.get(path,".katalon", this.version);
         return p.toFile();
+    }
+
+    private static String getNameKatalonFoler(String link){
+        int lastIndexof = link.lastIndexOf("/");
+        int endNameFolder = link.lastIndexOf(".zip");
+        return link.substring(lastIndexof + 1, endNameFolder );
     }
 
     @Override
