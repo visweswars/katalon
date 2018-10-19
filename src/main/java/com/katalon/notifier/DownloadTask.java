@@ -11,20 +11,25 @@ import org.apache.commons.io.IOUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+import java.awt.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class DownloadTask extends Builder {
     private String version;
+    private String execute;
 
     @DataBoundConstructor
-    public DownloadTask(String version){
-       this.version = version;
+    public DownloadTask(String version, String execute){
+
+        this.version = version;
+        this.execute = execute;
     }
 
     public String getVersion() {
@@ -33,6 +38,14 @@ public class DownloadTask extends Builder {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getExecute() {
+        return execute;
+    }
+
+    public void setExecute(String execute) {
+        this.execute = execute;
     }
 
     private static File downloadAndExtract(String link, File targetDir) throws IOException{
@@ -50,8 +63,10 @@ public class DownloadTask extends Builder {
 
     private static File unpackArchive(ZipInputStream inputStream, File targetDir, String nameKatalonFolder) throws IOException{
         ZipEntry entry;
+
         while((entry = inputStream.getNextEntry()) != null){
             String folder = entry.getName().replace(nameKatalonFolder, "");
+
             File file = new File(targetDir, File.separator + folder);
 
             //File file = new File(targetDir, File.separator + entry.getName());
@@ -83,7 +98,6 @@ public class DownloadTask extends Builder {
     }
 
     private File getKatalonFolder(){
-
         //Get user home, but failed. path = "C:\\windows\\system32\\config\\systemprofile\\.katalon\\5.8.0";
 //        String path = System.getProperty("user.home");
 
@@ -98,11 +112,30 @@ public class DownloadTask extends Builder {
         return link.substring(lastIndexof + 1, endNameFolder );
     }
 
+    private void runExcutebyCmd(String katalonExecuteDir, BuildListener buildListener) throws IOException {
+        String configExecute = katalonExecuteDir + " " +this.execute;
+
+        Process cmdProc = Runtime.getRuntime().exec(configExecute);
+
+        BufferedReader stdoutReader = new BufferedReader(
+                new InputStreamReader(cmdProc.getInputStream()));
+        String line;
+
+        while ((line = stdoutReader.readLine()) != null) {
+            buildListener.getLogger().println(line);
+        }
+    }
+
     @Override
     public boolean perform(AbstractBuild<?, ?> abstractBuild, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
         //String link = "https://download.katalon.com/5.8.0/Katalon_Studio_Windows_64-5.8.0.zip";
         String link = "https://download.katalon.com/" + this.version + "/Katalon_Studio_Windows_64-" + this.version + ".zip";
         File katalonDir = getKatalonFolder();
+
+
+        //Get direction workspace
+        //abstractBuild.getProject().getSomeWorkspace();
+        //String dirWorkspace = abstractBuild.getEnvironment().get("WORKSPACE");
 
         try {
             Path fileLog = Paths.get(katalonDir.toString(), ".katalon.done");
@@ -119,6 +152,8 @@ public class DownloadTask extends Builder {
 
                 fileLog.toFile().createNewFile();
             }
+
+            runExcutebyCmd(Paths.get(katalonDir.toString(), "katalon").toString(), buildListener);
 
         } catch (Exception e) {
             e.printStackTrace();
