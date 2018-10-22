@@ -113,12 +113,21 @@ public class DownloadTask extends Builder {
     }
 
     private void runExcutebyCmd(String katalonExecuteDir, BuildListener buildListener) throws IOException {
+
+        //Remove -consolelog in this.execute to show in console jenkins
         String configExecute = katalonExecuteDir + " " +this.execute;
 
-        Process cmdProc = Runtime.getRuntime().exec(configExecute);
+        boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
 
-        BufferedReader stdoutReader = new BufferedReader(
-                new InputStreamReader(cmdProc.getInputStream()));
+        Process cmdProc;
+
+        if (isWindows){
+            cmdProc = Runtime.getRuntime().exec("cmd /c " + configExecute);
+        } else{
+            cmdProc = Runtime.getRuntime().exec("sh -c " + configExecute);
+        }
+
+        BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(cmdProc.getInputStream()));
         String line;
 
         while ((line = stdoutReader.readLine()) != null) {
@@ -131,7 +140,6 @@ public class DownloadTask extends Builder {
         //String link = "https://download.katalon.com/5.8.0/Katalon_Studio_Windows_64-5.8.0.zip";
         String link = "https://download.katalon.com/" + this.version + "/Katalon_Studio_Windows_64-" + this.version + ".zip";
         File katalonDir = getKatalonFolder();
-
 
         //Get direction workspace
         //abstractBuild.getProject().getSomeWorkspace();
