@@ -25,6 +25,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class DownloadTask extends Builder {
+
+    private static String linkFileConfig = "https://katalon-analytics-local.s3-ap-southeast-1.amazonaws.com/Jenkin-plugin/config.json";
+
     private String version;
     private String execute;
     private String fileNameKatalon;
@@ -161,7 +164,6 @@ public class DownloadTask extends Builder {
     }
 
     private String readFileJSon() throws IOException {
-        String linkFileConfig = "https://katalon-analytics-local.s3-ap-southeast-1.amazonaws.com/Jenkin-plugin/config.json";
         URL url = new URL(linkFileConfig);
 
         String os = getOSVersion();
@@ -182,7 +184,7 @@ public class DownloadTask extends Builder {
     @Override
     public boolean perform(AbstractBuild<?, ?> abstractBuild, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
         try {
-            String workSpace = abstractBuild.getProject().getSomeWorkspace().toString();
+            String workSpace = abstractBuild.getProject().getSomeWorkspace().getRemote();
 
             File katalonDir = getKatalonFolder();
 
