@@ -21,13 +21,11 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class DownloadTask extends Builder {
-
-    private static String linkFileConfig = "https://katalon-analytics-local.s3-ap-southeast-1.amazonaws.com/Jenkin-plugin/config.json";
-
     private String version;
     private String execute;
     private String fileNameKatalon;
@@ -164,14 +162,17 @@ public class DownloadTask extends Builder {
     }
 
     private String readFileJSon() throws IOException {
+        String linkFileConfig = "https://katalon-analytics-local.s3-ap-southeast-1.amazonaws.com/Jenkin-plugin/config.json";
         URL url = new URL(linkFileConfig);
 
         String os = getOSVersion();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        List<KatalonVersion> listVersion = objectMapper.readValue(url, new TypeReference<List<KatalonVersion>>(){});
+        Map<String, List<KatalonVersion>> listVersion = objectMapper.readValue(url, new TypeReference<Map<String, List<KatalonVersion>>>(){});
 
-        for(KatalonVersion ver : listVersion){
+        List<KatalonVersion> var = listVersion.get(this.version);
+
+        for(KatalonVersion ver : var){
             if((ver.getVersion().equals(this.version)) && (ver.getOs().equals(os))){
                 String temp = ver.getFilename();
                 this.fileNameKatalon = temp.substring(0,temp.lastIndexOf("."));
@@ -184,7 +185,7 @@ public class DownloadTask extends Builder {
     @Override
     public boolean perform(AbstractBuild<?, ?> abstractBuild, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
         try {
-            String workSpace = abstractBuild.getProject().getSomeWorkspace().getRemote();
+            String workSpace = abstractBuild.getProject().getSomeWorkspace().toString();
 
             File katalonDir = getKatalonFolder();
 
