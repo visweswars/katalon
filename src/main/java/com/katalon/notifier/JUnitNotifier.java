@@ -12,7 +12,6 @@ import hudson.tasks.junit.TestResultAction;
 import hudson.tasks.test.AggregatedTestResultAction;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

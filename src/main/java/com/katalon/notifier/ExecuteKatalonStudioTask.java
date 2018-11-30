@@ -9,13 +9,11 @@ import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ExecuteKatalonStudioTask extends Builder {
