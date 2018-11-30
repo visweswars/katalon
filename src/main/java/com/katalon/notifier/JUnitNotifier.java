@@ -48,6 +48,7 @@ public class JUnitNotifier extends Notifier {
                 if (childReports != null) {
                     for (AggregatedTestResultAction.ChildReport childReport : childReports) {
                         if (childReport.result instanceof TestResult) {
+                            LogUtils.log(buildListener, childReport.result.toString());
                             testResults.add((TestResult) childReport.result);
                         }
                     }
