@@ -17,7 +17,7 @@ import java.util.zip.ZipInputStream;
 class KatalonUtils {
 
     private static final String RELEASES_LIST =
-            "https://github.com/katalon-studio/katalon-studio/blob/master/releases.json";
+            "https://raw.githubusercontent.com/katalon-studio/katalon-studio/master/releases.json";
 
     private static KatalonVersion getVersionInfo(BuildListener buildListener, String versionNumber) throws IOException {
 
