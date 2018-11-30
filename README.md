@@ -1,1 +1,1 @@
-# jenkins-plugin
+# Katalon Plugin for Jenkins
