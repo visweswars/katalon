@@ -60,6 +60,8 @@ class KatalonUtils {
 
         KatalonVersion version = KatalonUtils.getVersionInfo(buildListener, versionNumber);
 
+        LogUtils.log(buildListener, "Downloading Katalon Studio.");
+
         URL url = new URL(version.getUrl());
 
         url.openStream();
