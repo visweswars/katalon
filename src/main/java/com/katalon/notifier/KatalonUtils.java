@@ -25,9 +25,13 @@ class KatalonUtils {
 
         String os = OsUtils.getOSVersion(buildListener);
 
+        LogUtils.log(buildListener, "Retrieve Katalon Studio version: " + versionNumber + ", OS: " + os);
+
         ObjectMapper objectMapper = new ObjectMapper();
         List<KatalonVersion> versions = objectMapper.readValue(url, new TypeReference<List<KatalonVersion>>() {
         });
+
+        LogUtils.log(buildListener, "Number of releases: " + versions.size());
 
         for (KatalonVersion version : versions) {
             if ((version.getVersion().equals(versionNumber)) && (version.getOs().equals(os))) {
