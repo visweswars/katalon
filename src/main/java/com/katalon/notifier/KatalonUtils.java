@@ -16,12 +16,12 @@ import java.util.zip.ZipInputStream;
 
 class KatalonUtils {
 
-    private static final String linkFileConfig =
-            "https://katalon-analytics-local.s3-ap-southeast-1.amazonaws.com/Jenkin-plugin/config.json";
+    private static final String RELEASES_LIST =
+            "https://github.com/katalon-studio/katalon-studio/blob/master/releases.json";
 
     private static KatalonVersion getVersionInfo(BuildListener buildListener, String versionNumber) throws IOException {
 
-        URL url = new URL(linkFileConfig);
+        URL url = new URL(RELEASES_LIST);
 
         String os = OsUtils.getOSVersion(buildListener);
 
