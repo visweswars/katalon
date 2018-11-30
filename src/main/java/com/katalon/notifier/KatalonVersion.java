@@ -1,12 +1,14 @@
 package com.katalon.notifier;
 
 public class KatalonVersion {
-    private String version = null;
-    private String filename = null;
-    private String os = null;
-    private String url = null;
 
-    KatalonVersion(){
+    private String version;
+    private String filename;
+    private String os;
+    private String url;
+    private String containingFolder;
+
+    KatalonVersion() {
 
     }
 
@@ -40,5 +42,13 @@ public class KatalonVersion {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getContainingFolder() {
+        return containingFolder;
+    }
+
+    public void setContainingFolder(String containingFolder) {
+        this.containingFolder = containingFolder;
     }
 }

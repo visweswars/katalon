@@ -1,14 +1,12 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-
-
-    <f:entry title="Katalon Version" field="version">
+    <f:entry title="Katalon Studio version" field="version">
         <f:textbox />
     </f:entry>
 
-    <f:entry title="Execute Katalon Project by command" field="execute">
-            <f:textarea />
-        </f:entry>
+    <f:entry title="Command arguments" field="executeArgs">
+        <f:textarea />
+    </f:entry>
 
 </j:jelly>
