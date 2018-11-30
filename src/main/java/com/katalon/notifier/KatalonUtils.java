@@ -34,7 +34,7 @@ class KatalonUtils {
         LogUtils.log(buildListener, "Number of releases: " + versions.size());
 
         for (KatalonVersion version : versions) {
-            if ((version.getVersion().equals(versionNumber)) && (version.getOs().equals(os))) {
+            if ((version.getVersion().equals(versionNumber)) && (version.getOs().equalsIgnoreCase(os))) {
                 String containingFolder = version.getContainingFolder();
                 if (containingFolder == null) {
                     String fileName = version.getFilename();
