@@ -28,8 +28,8 @@
              ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
         -->
         <junit.plugin.version>1.20</junit.plugin.version>
-        <httpclient.version>4.5.1</httpclient.version>
         <jackson.version>2.9.5</jackson.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
     </properties>
 
     <!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for the applicable one if needed. -->
@@ -82,9 +82,9 @@
             <version>${junit.plugin.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

@@ -60,7 +60,11 @@ public class ExecuteKatalonStudioTask extends Builder {
 
             File katalonDir = KatalonUtils.getKatalonPackage(buildListener, this.version);
 
-            String katalonExecutableFile = Paths.get(katalonDir.toString(), "katalon").toString();
+            LogUtils.log(buildListener, katalonDir.getAbsolutePath());
+
+            String katalonExecutableFile = Paths.get(katalonDir.getAbsolutePath(), "katalon")
+                    .toAbsolutePath()
+                    .toString();
 
             executeKatalon(katalonExecutableFile, workSpace, buildListener);
 

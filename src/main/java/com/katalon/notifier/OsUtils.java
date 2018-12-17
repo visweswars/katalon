@@ -65,15 +65,15 @@ class OsUtils {
             cmdProc = Runtime.getRuntime().exec("sh -c " + command);
         }
 
-        BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(cmdProc.getInputStream()));
-        String line;
-
-        while ((line = stdoutReader.readLine()) != null) {
-            LogUtils.log(buildListener, line);
+        try (
+                BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(cmdProc.getInputStream()));
+                BufferedReader stderrReader = new BufferedReader(new InputStreamReader(cmdProc.getErrorStream()))
+        ) {
+            String line;
+            while ((line = stdoutReader.readLine()) != null ||
+                    (line = stderrReader.readLine()) != null) {
+                LogUtils.log(buildListener, line);
+            }
         }
-    }
-
-    static boolean buildDirectory(File file) {
-        return file.exists() || file.mkdirs();
     }
 }

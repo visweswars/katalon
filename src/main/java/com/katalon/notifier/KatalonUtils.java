@@ -2,17 +2,21 @@ package com.katalon.notifier;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hudson.FilePath;
 import hudson.model.BuildListener;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.function.Consumer;
 
 class KatalonUtils {
 
@@ -56,44 +60,32 @@ class KatalonUtils {
 
     private static void downloadAndExtract(
             BuildListener buildListener, String versionNumber, File targetDir)
-            throws IOException {
+            throws IOException, InterruptedException {
 
         KatalonVersion version = KatalonUtils.getVersionInfo(buildListener, versionNumber);
 
-        LogUtils.log(buildListener, "Downloading Katalon Studio.");
+        String versionUrl = version.getUrl();
 
-        URL url = new URL(version.getUrl());
+        LogUtils.log(
+                buildListener,
+                "Downloading Katalon Studio from " + versionUrl + ". It may take a few minutes.");
 
-        url.openStream();
+        URL url = new URL(versionUrl);
 
-        InputStream in = new BufferedInputStream(url.openStream(), 1024);
-        ZipInputStream zIn = new ZipInputStream(in);
-
-        unpackArchive(version.getContainingFolder(), zIn, targetDir);
-    }
-
-    private static void unpackArchive(
-            String containingFolder, ZipInputStream inputStream, File targetDir)
-            throws IOException {
-        ZipEntry entry;
-
-        while ((entry = inputStream.getNextEntry()) != null) {
-            String folder = entry.getName().replace(containingFolder, "");
-
-            File file = new File(targetDir, File.separator + folder);
-
-            if (!OsUtils.buildDirectory(file.getParentFile())) {
-                throw new IOException("Could not create directory: " + file.getParentFile());
-            }
-
-            if (!entry.isDirectory()) {
-                try (OutputStream fileOutputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-                    IOUtils.copy(inputStream, fileOutputStream);
-                }
+        try (InputStream inputStream = url.openStream()) {
+            Path temporaryFile = Files.createTempFile("Katalon-" + versionNumber, "");
+            Files.copy(
+                    inputStream,
+                    temporaryFile,
+                    StandardCopyOption.REPLACE_EXISTING);
+            FilePath temporaryFilePath = new FilePath(temporaryFile.toFile());
+            FilePath targetDirPath = new FilePath(targetDir);
+            if (versionUrl.contains(".zip")) {
+                temporaryFilePath.unzip(targetDirPath);
+            } else if (versionUrl.contains(".tar.gz")) {
+                temporaryFilePath.untar(targetDirPath, FilePath.TarCompression.GZIP);
             } else {
-                if (!OsUtils.buildDirectory(file)) {
-                    throw new IOException("Could not create directory" + file);
-                }
+                throw new IllegalStateException();
             }
         }
     }
@@ -105,7 +97,9 @@ class KatalonUtils {
         return p.toFile();
     }
 
-    static File getKatalonPackage(BuildListener buildListener, String versionNumber) throws IOException {
+    static File getKatalonPackage(
+            BuildListener buildListener, String versionNumber)
+            throws IOException, InterruptedException {
 
         File katalonDir = getKatalonFolder(versionNumber);
 
@@ -123,6 +117,16 @@ class KatalonUtils {
             fileLog.toFile().createNewFile();
         }
 
-        return katalonDir;
+        String[] childrenNames = katalonDir.list((dir, name) -> {
+            File file = new File(dir, name);
+            return file.isDirectory() && name.contains("Katalon");
+        });
+
+        String katalonContainingDirName = Arrays.stream(childrenNames).findFirst().get();
+
+
+        File katalonContainingDir = new File(katalonDir, katalonContainingDirName);
+
+        return katalonContainingDir;
     }
 }
