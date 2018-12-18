@@ -15,7 +15,7 @@
     <version>1.0.0</version>
     <packaging>hpi</packaging>
     <name>Katalon Studio Plugin</name>
-    <description>Execute Katalon Studio inside Jenkins</description>
+    <description>Execute Katalon Studio in Jenkins</description>
 
     <properties>
         <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
@@ -46,22 +46,20 @@
         <url>https://www.katalon.com</url>
     </organization>
 
-    <!-- If you want this to appear on the wiki page:
     <developers>
       <developer>
-        <id>bhacker</id>
-        <name>Bob Q. Hacker</name>
-        <email>bhacker@nowhere.net</email>
+        <id>devalex88</id>
+        <name>Alex</name>
+        <email>dev.alex.88@gmail.com</email>
       </developer>
     </developers>
-    -->
-    <!-- Assuming you want to host on @jenkinsci:
+
     <scm>
       <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
       <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
       <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     </scm>
-     -->
+
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
