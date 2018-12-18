@@ -56,7 +56,7 @@ class OsUtils {
 
         String[] cmdarray;
         if (SystemUtils.IS_OS_WINDOWS) {
-            cmdarray = new String[] { "cmd /c " + command };
+            cmdarray = Arrays.asList("cmd", "/c", command).toArray(new String[] {});
         } else {
             cmdarray = Arrays.asList("sh", "-c", command).toArray(new String[] {});
         }
