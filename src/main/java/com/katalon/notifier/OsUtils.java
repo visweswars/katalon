@@ -53,18 +53,13 @@ class OsUtils {
 
     static void runCommand(BuildListener buildListener, String command) throws IOException {
 
-        LogUtils.log(buildListener, "Execute " + command);
-
-        boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
-
-        Process cmdProc;
-
-        if (isWindows) {
-            cmdProc = Runtime.getRuntime().exec("cmd /c " + command);
+        if (SystemUtils.IS_OS_WINDOWS) {
+            command = "cmd /c " + command;
         } else {
-            cmdProc = Runtime.getRuntime().exec("sh -c " + command);
+            command = "sh -c '" + command + "'";
         }
-
+        LogUtils.log(buildListener, "Execute " + command);
+        Process cmdProc = Runtime.getRuntime().exec(command);
         try (
                 BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(cmdProc.getInputStream()));
                 BufferedReader stderrReader = new BufferedReader(new InputStreamReader(cmdProc.getErrorStream()))
