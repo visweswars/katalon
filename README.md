@@ -10,13 +10,19 @@ Katalon Studio will be downloaded and deployed automatically.
 
 * Install the plugin.
 
-* Go to job Configure > Build > Add build step > Execute Katalon Studio Tests.
+* Go to project *Configure* > *Build* > *Add build step* > *Execute Katalon Studio Tests*.
 
 * Provide the desired Katalon Studio version and command arguments.
 
 * Save the configuration.
 
-Optionally, you can tell Jenkins to publish the JUnit reports. 
+Optionally, you can tell Jenkins to publish the JUnit reports.
+
+* Go to *Add post-build action* > *Publish JUnit test result report*.
+
+* Set the value *Test report XMLs* to *Reports/**/JUnit_Report.xml*.
+
+* *Latest Test Result* will be shown in the project page after every build.
 
 ## Development
 
