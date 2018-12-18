@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 class OsUtils {
 
@@ -53,11 +54,14 @@ class OsUtils {
 
     static void runCommand(BuildListener buildListener, String command) throws IOException {
 
+        String[] cmdarray;
         if (SystemUtils.IS_OS_WINDOWS) {
-            command = "cmd /c " + command;
+            cmdarray = new String[] { "cmd /c " + command };
+        } else {
+            cmdarray = Arrays.asList("sh", "-c", command).toArray(new String[] {});
         }
         LogUtils.log(buildListener, "Execute " + command);
-        Process cmdProc = Runtime.getRuntime().exec(command);
+        Process cmdProc = Runtime.getRuntime().exec(cmdarray);
         try (
                 BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(cmdProc.getInputStream()));
                 BufferedReader stderrReader = new BufferedReader(new InputStreamReader(cmdProc.getErrorStream()))
