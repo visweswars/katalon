@@ -55,8 +55,6 @@ class OsUtils {
 
         if (SystemUtils.IS_OS_WINDOWS) {
             command = "cmd /c " + command;
-        } else {
-            command = "sh -c '" + command + "'";
         }
         LogUtils.log(buildListener, "Execute " + command);
         Process cmdProc = Runtime.getRuntime().exec(command);
