@@ -1,4 +1,4 @@
-package com.katalon.notifier;
+package com.katalon.jenkins.plugin;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 class KatalonUtils {
 

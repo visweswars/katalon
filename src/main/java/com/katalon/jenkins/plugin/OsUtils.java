@@ -1,10 +1,9 @@
-package com.katalon.notifier;
+package com.katalon.jenkins.plugin;
 
 import hudson.model.BuildListener;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -25,7 +24,7 @@ class OsUtils {
                 boolean is32 = true;
 
                 while ((line = reader.readLine()) != null) {
-                    if (line.indexOf("64") != -1) {
+                    if (line.contains("64")) {
                         is32 = false;
                         break;
                     }

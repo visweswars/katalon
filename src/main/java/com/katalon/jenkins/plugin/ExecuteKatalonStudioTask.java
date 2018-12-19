@@ -1,4 +1,4 @@
-package com.katalon.notifier;
+package com.katalon.jenkins.plugin;
 
 import com.google.common.base.Throwables;
 import hudson.Extension;
