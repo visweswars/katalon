@@ -1,4 +1,4 @@
-package com.katalon.notifier;
+package com.katalon.jenkins.plugin;
 
 import hudson.model.BuildListener;
 
