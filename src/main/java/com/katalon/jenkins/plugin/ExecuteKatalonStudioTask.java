@@ -58,20 +58,23 @@ public class ExecuteKatalonStudioTask extends Builder {
     public boolean perform(AbstractBuild<?, ?> abstractBuild, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
         try {
             FilePath workspace = abstractBuild.getWorkspace();
-            String workspaceLocation = workspace.getRemote();
 
-            if (workspaceLocation != null) {
+            if (workspace != null) {
+                String workspaceLocation = workspace.getRemote();
 
-                File katalonDir = KatalonUtils.getKatalonPackage(buildListener, this.version);
+                if (workspaceLocation != null) {
 
-                LogUtils.log(buildListener, katalonDir.getAbsolutePath());
+                    File katalonDir = KatalonUtils.getKatalonPackage(buildListener, this.version);
 
-                String katalonExecutableFile = Paths.get(katalonDir.getAbsolutePath(), "katalon")
-                        .toAbsolutePath()
-                        .toString();
+                    LogUtils.log(buildListener, katalonDir.getAbsolutePath());
 
-                executeKatalon(katalonExecutableFile, workspaceLocation, buildListener);
+                    String katalonExecutableFile = Paths.get(katalonDir.getAbsolutePath(), "katalon")
+                            .toAbsolutePath()
+                            .toString();
 
+                    executeKatalon(katalonExecutableFile, workspaceLocation, buildListener);
+
+                }
             }
 
         } catch (Exception e) {
