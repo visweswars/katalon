@@ -58,15 +58,19 @@ public class ExecuteKatalonStudioTask extends Builder {
         try {
             String workSpace = abstractBuild.getWorkspace().getRemote();
 
-            File katalonDir = KatalonUtils.getKatalonPackage(buildListener, this.version);
+            if (workSpace != null) {
 
-            LogUtils.log(buildListener, katalonDir.getAbsolutePath());
+                File katalonDir = KatalonUtils.getKatalonPackage(buildListener, this.version);
 
-            String katalonExecutableFile = Paths.get(katalonDir.getAbsolutePath(), "katalon")
-                    .toAbsolutePath()
-                    .toString();
+                LogUtils.log(buildListener, katalonDir.getAbsolutePath());
 
-            executeKatalon(katalonExecutableFile, workSpace, buildListener);
+                String katalonExecutableFile = Paths.get(katalonDir.getAbsolutePath(), "katalon")
+                        .toAbsolutePath()
+                        .toString();
+
+                executeKatalon(katalonExecutableFile, workSpace, buildListener);
+
+            }
 
         } catch (Exception e) {
             String stackTrace = Throwables.getStackTraceAsString(e);
