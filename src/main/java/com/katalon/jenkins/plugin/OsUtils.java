@@ -1,11 +1,14 @@
 package com.katalon.jenkins.plugin;
 
 import hudson.model.BuildListener;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 class OsUtils {
@@ -16,26 +19,15 @@ class OsUtils {
 
             try {
                 Process p = Runtime.getRuntime().exec("wmic os get osarchitecture");
+                try (InputStream inputStream = p.getInputStream()) {
+                    String output = IOUtils.toString(inputStream);
+                    p.destroy();
 
-                InputStreamReader in = new InputStreamReader(p.getInputStream());
-                BufferedReader reader = new BufferedReader(in);
-
-                String line;
-                boolean is32 = true;
-
-                while ((line = reader.readLine()) != null) {
-                    if (line.contains("64")) {
-                        is32 = false;
-                        break;
+                    if (output.contains("64")) {
+                        return "windows 64";
+                    } else {
+                        return "windows 32";
                     }
-                }
-                p.destroy();
-                reader.close();
-
-                if (is32) {
-                    return "windows 32";
-                } else {
-                    return "windows 64";
                 }
             } catch (Exception e) {
                 LogUtils.log(buildListener, "Cannot detect the OS architecture. Assume it is x64.");
@@ -55,15 +47,19 @@ class OsUtils {
 
         String[] cmdarray;
         if (SystemUtils.IS_OS_WINDOWS) {
-            cmdarray = Arrays.asList("cmd", "/c", command).toArray(new String[] {});
+            cmdarray = Arrays.asList("cmd", "/c", command).toArray(new String[]{});
         } else {
-            cmdarray = Arrays.asList("sh", "-c", command).toArray(new String[] {});
+            cmdarray = Arrays.asList("sh", "-c", command).toArray(new String[]{});
         }
         LogUtils.log(buildListener, "Execute " + command);
         Process cmdProc = Runtime.getRuntime().exec(cmdarray);
         try (
-                BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(cmdProc.getInputStream()));
-                BufferedReader stderrReader = new BufferedReader(new InputStreamReader(cmdProc.getErrorStream()))
+                BufferedReader stdoutReader = new BufferedReader(
+                        new InputStreamReader(
+                                cmdProc.getInputStream(), StandardCharsets.UTF_8));
+                BufferedReader stderrReader = new BufferedReader(
+                        new InputStreamReader(
+                                cmdProc.getErrorStream(), StandardCharsets.UTF_8))
         ) {
             String line;
             while ((line = stdoutReader.readLine()) != null ||

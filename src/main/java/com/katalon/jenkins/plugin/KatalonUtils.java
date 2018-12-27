@@ -109,11 +109,17 @@ class KatalonUtils {
         } else {
             FileUtils.deleteDirectory(katalonDir);
 
-            katalonDir.mkdirs();
+            boolean katalonDirCreated = katalonDir.mkdirs();
+            if (!katalonDirCreated) {
+                throw new IllegalStateException("Cannot create directory to store Katalon Studio package.");
+            }
 
             KatalonUtils.downloadAndExtract(buildListener, versionNumber, katalonDir);
 
-            fileLog.toFile().createNewFile();
+            boolean fileLogCreated = fileLog.toFile().createNewFile();
+            if (fileLogCreated) {
+                LogUtils.log(buildListener, "Katalon Studio has been installed successfully.");
+            }
         }
 
         String[] childrenNames = katalonDir.list((dir, name) -> {
