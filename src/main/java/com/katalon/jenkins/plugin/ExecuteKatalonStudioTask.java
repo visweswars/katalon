@@ -2,6 +2,7 @@ package com.katalon.jenkins.plugin;
 
 import com.google.common.base.Throwables;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -56,9 +57,10 @@ public class ExecuteKatalonStudioTask extends Builder {
     @Override
     public boolean perform(AbstractBuild<?, ?> abstractBuild, Launcher launcher, BuildListener buildListener) throws InterruptedException, IOException {
         try {
-            String workSpace = abstractBuild.getWorkspace().getRemote();
+            FilePath workspace = abstractBuild.getWorkspace();
+            String workspaceLocation = workspace.getRemote();
 
-            if (workSpace != null) {
+            if (workspaceLocation != null) {
 
                 File katalonDir = KatalonUtils.getKatalonPackage(buildListener, this.version);
 
@@ -68,7 +70,7 @@ public class ExecuteKatalonStudioTask extends Builder {
                         .toAbsolutePath()
                         .toString();
 
-                executeKatalon(katalonExecutableFile, workSpace, buildListener);
+                executeKatalon(katalonExecutableFile, workspaceLocation, buildListener);
 
             }
 
