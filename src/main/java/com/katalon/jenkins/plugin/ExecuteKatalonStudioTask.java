@@ -10,6 +10,7 @@ import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -21,11 +22,14 @@ public class ExecuteKatalonStudioTask extends Builder {
 
     private String version;
 
+    private String location;
+
     private String executeArgs;
 
     @DataBoundConstructor
-    public ExecuteKatalonStudioTask(String version, String executeArgs) {
+    public ExecuteKatalonStudioTask(String version, String location, String executeArgs) {
         this.version = version;
+        this.location = location;
         this.executeArgs = executeArgs;
     }
 
@@ -37,6 +41,14 @@ public class ExecuteKatalonStudioTask extends Builder {
         this.version = version;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public String getExecuteArgs() {
         return executeArgs;
     }
@@ -46,6 +58,13 @@ public class ExecuteKatalonStudioTask extends Builder {
     }
 
     private void executeKatalon(String katalonExecutableFile, String workSpace, BuildListener buildListener) throws IOException {
+        File file = new File(katalonExecutableFile);
+        if (!file.exists()) {
+            file = new File(katalonExecutableFile + ".exe");
+        }
+        if (file.exists()) {
+            file.setExecutable(true);
+        }
         String command = katalonExecutableFile +
                 " -runMode=console " +
                 " -projectPath=\"" + workSpace + "\" " +
@@ -64,14 +83,19 @@ public class ExecuteKatalonStudioTask extends Builder {
 
                 if (workspaceLocation != null) {
 
-                    File katalonDir = KatalonUtils.getKatalonPackage(buildListener, this.version);
+                    String katalonDirPath;
 
-                    LogUtils.log(buildListener, katalonDir.getAbsolutePath());
+                    if (StringUtils.isBlank(this.location)) {
+                        File katalonDir = KatalonUtils.getKatalonPackage(buildListener, this.version);
+                        katalonDirPath = katalonDir.getAbsolutePath();
+                    } else {
+                        katalonDirPath = this.location;
+                    }
 
-                    String katalonExecutableFile = Paths.get(katalonDir.getAbsolutePath(), "katalon")
+                    LogUtils.log(buildListener, "Using Katalon Studio at " + katalonDirPath);
+                    String katalonExecutableFile = Paths.get(katalonDirPath, "katalon")
                             .toAbsolutePath()
                             .toString();
-
                     executeKatalon(katalonExecutableFile, workspaceLocation, buildListener);
 
                 }
