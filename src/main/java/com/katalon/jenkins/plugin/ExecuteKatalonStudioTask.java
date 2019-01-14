@@ -65,7 +65,11 @@ public class ExecuteKatalonStudioTask extends Builder {
         if (file.exists()) {
             file.setExecutable(true);
         }
+        if (katalonExecutableFile.contains(" ")) {
+            katalonExecutableFile = "\"" + katalonExecutableFile + "\"";
+        }
         String command = katalonExecutableFile +
+                " -noSplash " +
                 " -runMode=console " +
                 " -projectPath=\"" + workSpace + "\" " +
                 this.executeArgs;
@@ -93,9 +97,17 @@ public class ExecuteKatalonStudioTask extends Builder {
                     }
 
                     LogUtils.log(buildListener, "Using Katalon Studio at " + katalonDirPath);
-                    String katalonExecutableFile = Paths.get(katalonDirPath, "katalon")
+                    String katalonExecutableFile;
+                    String os = OsUtils.getOSVersion(buildListener);
+                    if (os.contains("macos")) {
+                        katalonExecutableFile = Paths.get(katalonDirPath, "Contents", "MacOS", "katalon")
                             .toAbsolutePath()
                             .toString();
+                    } else {
+                        katalonExecutableFile = Paths.get(katalonDirPath, "katalon")
+                            .toAbsolutePath()
+                            .toString();
+                    }
                     executeKatalon(katalonExecutableFile, workspaceLocation, buildListener);
 
                 }

@@ -36,7 +36,7 @@ class OsUtils {
             }
 
         } else if (SystemUtils.IS_OS_MAC) {
-            return "mac";
+            return "macos (app)";
         } else if (SystemUtils.IS_OS_LINUX) {
             return "linux";
         }
