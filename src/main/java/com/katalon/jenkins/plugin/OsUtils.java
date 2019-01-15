@@ -4,11 +4,10 @@ import hudson.model.BuildListener;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 class OsUtils {
@@ -51,8 +50,9 @@ class OsUtils {
         } else {
             cmdarray = Arrays.asList("sh", "-c", command).toArray(new String[]{});
         }
-        LogUtils.log(buildListener, "Execute " + command);
-        Process cmdProc = Runtime.getRuntime().exec(cmdarray);
+        Path workingDirectory = Files.createTempDirectory("katalon-");
+        LogUtils.log(buildListener, "Execute " + command + " in " + workingDirectory);
+        Process cmdProc = Runtime.getRuntime().exec(cmdarray, null, workingDirectory.toFile());
         try (
                 BufferedReader stdoutReader = new BufferedReader(
                         new InputStreamReader(

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hudson.FilePath;
 import hudson.model.BuildListener;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -133,5 +134,63 @@ class KatalonUtils {
         File katalonContainingDir = new File(katalonDir, katalonContainingDirName);
 
         return katalonContainingDir;
+    }
+
+    private static void executeKatalon(
+            BuildListener buildListener, String katalonExecutableFile, String projectPath, String executeArgs)
+            throws IOException {
+        File file = new File(katalonExecutableFile);
+        if (!file.exists()) {
+            file = new File(katalonExecutableFile + ".exe");
+        }
+        if (file.exists()) {
+            file.setExecutable(true);
+        }
+        if (katalonExecutableFile.contains(" ")) {
+            katalonExecutableFile = "\"" + katalonExecutableFile + "\"";
+        }
+        String command = katalonExecutableFile +
+                " -noSplash " +
+                " -runMode=console " +
+                " -projectPath=\"" + projectPath + "\" " +
+                executeArgs;
+
+        OsUtils.runCommand(buildListener, command);
+    }
+
+    public static void executeKatalon(
+            BuildListener buildListener,
+            String version,
+            String location,
+            String projectPath,
+            String executeArgs)
+            throws IOException, InterruptedException {
+
+        String katalonDirPath;
+
+        if (StringUtils.isBlank(location)) {
+            File katalonDir = KatalonUtils.getKatalonPackage(buildListener, version);
+            katalonDirPath = katalonDir.getAbsolutePath();
+        } else {
+            katalonDirPath = location;
+        }
+
+        LogUtils.log(buildListener, "Using Katalon Studio at " + katalonDirPath);
+        String katalonExecutableFile;
+        String os = OsUtils.getOSVersion(buildListener);
+        if (os.contains("macos")) {
+            katalonExecutableFile = Paths.get(katalonDirPath, "Contents", "MacOS", "katalon")
+                    .toAbsolutePath()
+                    .toString();
+        } else {
+            katalonExecutableFile = Paths.get(katalonDirPath, "katalon")
+                    .toAbsolutePath()
+                    .toString();
+        }
+        executeKatalon(
+                buildListener,
+                katalonExecutableFile,
+                projectPath,
+                executeArgs);
     }
 }
