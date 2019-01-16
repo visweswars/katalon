@@ -12,7 +12,6 @@ import hudson.tasks.Builder;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
-import sun.rmi.runtime.Log;
 
 import java.io.IOException;
 

@@ -17,7 +17,7 @@
         <f:textbox />
     </f:entry>
 
-    <f:entry title="Xvfb configuration (for Linux)" field="xvfbConfiguration">
+    <f:entry title="Xvfb-run configuration (for Linux)" field="xvfbConfiguration">
         <f:textbox />
     </f:entry>
 
