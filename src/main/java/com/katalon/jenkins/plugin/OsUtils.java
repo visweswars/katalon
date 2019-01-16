@@ -59,12 +59,10 @@ class OsUtils {
             if (!StringUtils.isBlank(x11Display)) {
                 command = "DISPLAY=" + x11Display + " " + command;
             }
-            List<String> cmdlist;
-            if (StringUtils.isBlank(xvfbConfiguration)) {
-                cmdlist = Arrays.asList("sh", "-c", command);
-            } else {
-                cmdlist = Arrays.asList("xvfb-run", "-s", "-screen 0 " + xvfbConfiguration, command);
+            if (!StringUtils.isBlank(xvfbConfiguration)) {
+                command = "xvfb-run -s \"" + xvfbConfiguration + "\" " + command;
             }
+            List<String> cmdlist = Arrays.asList("sh", "-c", command);
             cmdarray = cmdlist.toArray(new String[]{});
         }
         Path workingDirectory = Files.createTempDirectory("katalon-");
