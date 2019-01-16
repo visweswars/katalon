@@ -45,7 +45,7 @@ class OsUtils {
         return "";
     }
 
-    static void runCommand(
+    static boolean runCommand(
             BuildListener buildListener,
             String command,
             String x11Display,
@@ -82,5 +82,6 @@ class OsUtils {
                 LogUtils.log(buildListener, line);
             }
         }
+        return cmdProc.exitValue() == 0;
     }
 }

@@ -93,7 +93,7 @@ public class ExecuteKatalonStudioTask extends Builder {
 
                 if (workspaceLocation != null) {
 
-                    KatalonUtils.executeKatalon(
+                    return KatalonUtils.executeKatalon(
                             buildListener,
                             this.version,
                             this.location,
@@ -105,11 +105,13 @@ public class ExecuteKatalonStudioTask extends Builder {
                 }
             }
 
+            return true;
+
         } catch (Exception e) {
             String stackTrace = Throwables.getStackTraceAsString(e);
             LogUtils.log(buildListener, stackTrace);
+            return false;
         }
-        return true;
     }
 
     @Extension

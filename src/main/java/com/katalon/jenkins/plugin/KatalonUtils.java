@@ -136,7 +136,7 @@ class KatalonUtils {
         return katalonContainingDir;
     }
 
-    private static void executeKatalon(
+    private static boolean executeKatalon(
             BuildListener buildListener,
             String katalonExecutableFile,
             String projectPath,
@@ -162,10 +162,10 @@ class KatalonUtils {
         }
         command += " " + executeArgs + " ";
 
-        OsUtils.runCommand(buildListener, command, x11Display, xvfbConfiguration);
+        return OsUtils.runCommand(buildListener, command, x11Display, xvfbConfiguration);
     }
 
-    public static void executeKatalon(
+    public static boolean executeKatalon(
             BuildListener buildListener,
             String version,
             String location,
@@ -196,7 +196,7 @@ class KatalonUtils {
                     .toAbsolutePath()
                     .toString();
         }
-        executeKatalon(
+        return executeKatalon(
                 buildListener,
                 katalonExecutableFile,
                 projectPath,
