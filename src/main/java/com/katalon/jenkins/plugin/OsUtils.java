@@ -60,7 +60,7 @@ class OsUtils {
                 command = "DISPLAY=" + x11Display + " " + command;
             }
             if (!StringUtils.isBlank(xvfbConfiguration)) {
-                command = "xvfb-run -a -s \"" + xvfbConfiguration + "\" " + command;
+                command = "xvfb-run " + xvfbConfiguration + " " + command;
             }
             List<String> cmdlist = Arrays.asList("sh", "-c", command);
             cmdarray = cmdlist.toArray(new String[]{});
