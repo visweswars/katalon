@@ -143,7 +143,7 @@ class KatalonUtils {
             String executeArgs,
             String x11Display,
             String xvfbConfiguration)
-            throws IOException {
+            throws IOException, InterruptedException {
         File file = new File(katalonExecutableFile);
         if (!file.exists()) {
             file = new File(katalonExecutableFile + ".exe");

@@ -50,7 +50,7 @@ class OsUtils {
             String command,
             String x11Display,
             String xvfbConfiguration)
-            throws IOException {
+            throws IOException, InterruptedException {
 
         String[] cmdarray;
         if (SystemUtils.IS_OS_WINDOWS) {
@@ -82,6 +82,7 @@ class OsUtils {
                 LogUtils.log(buildListener, line);
             }
         }
+        cmdProc.waitFor();
         return cmdProc.exitValue() == 0;
     }
 }
