@@ -68,7 +68,7 @@ class OsUtils {
             cmdarray = cmdlist.toArray(new String[]{});
         }
         Path workingDirectory = Files.createTempDirectory("katalon-");
-        LogUtils.log(buildListener, "Execute " + command + " in " + workingDirectory);
+        LogUtils.log(buildListener, "Execute " + Arrays.toString(cmdarray) + " in " + workingDirectory);
         Process cmdProc = Runtime.getRuntime().exec(cmdarray, null, workingDirectory.toFile());
         try (
                 BufferedReader stdoutReader = new BufferedReader(
