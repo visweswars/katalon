@@ -137,7 +137,12 @@ class KatalonUtils {
     }
 
     private static void executeKatalon(
-            BuildListener buildListener, String katalonExecutableFile, String projectPath, String executeArgs)
+            BuildListener buildListener,
+            String katalonExecutableFile,
+            String projectPath,
+            String executeArgs,
+            String x11Display,
+            String xvfbConfiguration)
             throws IOException {
         File file = new File(katalonExecutableFile);
         if (!file.exists()) {
@@ -151,11 +156,13 @@ class KatalonUtils {
         }
         String command = katalonExecutableFile +
                 " -noSplash " +
-                " -runMode=console " +
-                " -projectPath=\"" + projectPath + "\" " +
-                executeArgs;
+                " -runMode=console ";
+        if (!executeArgs.contains("-projectPath")) {
+            command += " -projectPath=\"" + projectPath + "\" ";
+        }
+        command += " " + executeArgs + " ";
 
-        OsUtils.runCommand(buildListener, command);
+        OsUtils.runCommand(buildListener, command, x11Display, xvfbConfiguration);
     }
 
     public static void executeKatalon(
@@ -163,7 +170,9 @@ class KatalonUtils {
             String version,
             String location,
             String projectPath,
-            String executeArgs)
+            String executeArgs,
+            String x11Display,
+            String xvfbConfiguration)
             throws IOException, InterruptedException {
 
         String katalonDirPath;
@@ -191,6 +200,8 @@ class KatalonUtils {
                 buildListener,
                 katalonExecutableFile,
                 projectPath,
-                executeArgs);
+                executeArgs,
+                x11Display,
+                xvfbConfiguration);
     }
 }

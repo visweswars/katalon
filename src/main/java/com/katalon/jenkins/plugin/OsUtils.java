@@ -2,13 +2,16 @@ package com.katalon.jenkins.plugin;
 
 import hudson.model.BuildListener;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 class OsUtils {
 
@@ -42,13 +45,27 @@ class OsUtils {
         return "";
     }
 
-    static void runCommand(BuildListener buildListener, String command) throws IOException {
+    static void runCommand(
+            BuildListener buildListener,
+            String command,
+            String x11Display,
+            String xvfbConfiguration)
+            throws IOException {
 
         String[] cmdarray;
         if (SystemUtils.IS_OS_WINDOWS) {
             cmdarray = Arrays.asList("cmd", "/c", command).toArray(new String[]{});
         } else {
-            cmdarray = Arrays.asList("sh", "-c", command).toArray(new String[]{});
+            if (!StringUtils.isBlank(x11Display)) {
+                command = "DISPLAY=" + x11Display + " " + command;
+            }
+            List<String> cmdlist;
+            if (StringUtils.isBlank(xvfbConfiguration)) {
+                cmdlist = Arrays.asList("sh", "-c", command);
+            } else {
+                cmdlist = Arrays.asList("xvfb-run", "-s", "-screen 0 " + xvfbConfiguration, command);
+            }
+            cmdarray = cmdlist.toArray(new String[]{});
         }
         Path workingDirectory = Files.createTempDirectory("katalon-");
         LogUtils.log(buildListener, "Execute " + command + " in " + workingDirectory);

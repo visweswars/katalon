@@ -1,0 +1,1 @@
+<div>E.g. <code>1024x768x24</code>. If specified, <code>xvfb-run</code> will be used. Please make sure Xvfb has been installed.</div>

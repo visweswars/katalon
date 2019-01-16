@@ -12,6 +12,7 @@ import hudson.tasks.Builder;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
+import sun.rmi.runtime.Log;
 
 import java.io.IOException;
 
@@ -23,11 +24,17 @@ public class ExecuteKatalonStudioTask extends Builder {
 
     private String executeArgs;
 
+    private String x11Display;
+
+    private String xvfbConfiguration;
+
     @DataBoundConstructor
-    public ExecuteKatalonStudioTask(String version, String location, String executeArgs) {
+    public ExecuteKatalonStudioTask(
+            String version, String location, String executeArgs, String x11Display) {
         this.version = version;
         this.location = location;
         this.executeArgs = executeArgs;
+        this.x11Display = x11Display;
     }
 
     public String getVersion() {
@@ -54,10 +61,27 @@ public class ExecuteKatalonStudioTask extends Builder {
         this.executeArgs = executeArgs;
     }
 
+    public String getX11Display() {
+        return x11Display;
+    }
+
+    public void setX11Display(String x11Display) {
+        this.x11Display = x11Display;
+    }
+
+    public String getXvfbConfiguration() {
+        return xvfbConfiguration;
+    }
+
+    public void setXvfbConfiguration(String xvfbConfiguration) {
+        this.xvfbConfiguration = xvfbConfiguration;
+    }
+
     @Override
     public boolean perform(AbstractBuild<?, ?> abstractBuild, Launcher launcher, BuildListener buildListener)
             throws InterruptedException, IOException {
         try {
+
             FilePath workspace = abstractBuild.getWorkspace();
 
             if (workspace != null) {
@@ -70,7 +94,9 @@ public class ExecuteKatalonStudioTask extends Builder {
                             this.version,
                             this.location,
                             workspaceLocation,
-                            this.executeArgs);
+                            this.executeArgs,
+                            this.x11Display,
+                            this.xvfbConfiguration);
 
                 }
             }
