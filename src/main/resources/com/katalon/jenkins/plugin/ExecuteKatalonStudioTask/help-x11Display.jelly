@@ -1,1 +1,2 @@
-<div>E.g. <code>:1</code>. This value will be used as the <code>DISPLAY</code> environment variable.</div>
+<div>E.g. <code>:1</code>. This value will be used as the <code>DISPLAY</code> environment variable.
+ Jenkins must be allowed to connect to the display, see <code>xhost</code> if you encounter access control issues.</div>
