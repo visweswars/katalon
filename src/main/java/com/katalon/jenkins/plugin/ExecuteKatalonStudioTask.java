@@ -30,11 +30,16 @@ public class ExecuteKatalonStudioTask extends Builder {
 
     @DataBoundConstructor
     public ExecuteKatalonStudioTask(
-            String version, String location, String executeArgs, String x11Display) {
+            String version,
+            String location,
+            String executeArgs,
+            String x11Display,
+            String xvfbConfiguration) {
         this.version = version;
         this.location = location;
         this.executeArgs = executeArgs;
         this.x11Display = x11Display;
+        this.xvfbConfiguration = xvfbConfiguration;
     }
 
     public String getVersion() {
