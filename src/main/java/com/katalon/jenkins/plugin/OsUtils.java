@@ -2,14 +2,16 @@ package com.katalon.jenkins.plugin;
 
 import hudson.model.BuildListener;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 class OsUtils {
 
@@ -43,16 +45,29 @@ class OsUtils {
         return "";
     }
 
-    static void runCommand(BuildListener buildListener, String command) throws IOException {
+    static boolean runCommand(
+            BuildListener buildListener,
+            String command,
+            String x11Display,
+            String xvfbConfiguration)
+            throws IOException, InterruptedException {
 
         String[] cmdarray;
         if (SystemUtils.IS_OS_WINDOWS) {
             cmdarray = Arrays.asList("cmd", "/c", command).toArray(new String[]{});
         } else {
-            cmdarray = Arrays.asList("sh", "-c", command).toArray(new String[]{});
+            if (!StringUtils.isBlank(x11Display)) {
+                command = "DISPLAY=" + x11Display + " " + command;
+            }
+            if (!StringUtils.isBlank(xvfbConfiguration)) {
+                command = "xvfb-run " + xvfbConfiguration + " " + command;
+            }
+            List<String> cmdlist = Arrays.asList("sh", "-c", command);
+            cmdarray = cmdlist.toArray(new String[]{});
         }
-        LogUtils.log(buildListener, "Execute " + command);
-        Process cmdProc = Runtime.getRuntime().exec(cmdarray);
+        Path workingDirectory = Files.createTempDirectory("katalon-");
+        LogUtils.log(buildListener, "Execute " + Arrays.toString(cmdarray) + " in " + workingDirectory);
+        Process cmdProc = Runtime.getRuntime().exec(cmdarray, null, workingDirectory.toFile());
         try (
                 BufferedReader stdoutReader = new BufferedReader(
                         new InputStreamReader(
@@ -67,5 +82,7 @@ class OsUtils {
                 LogUtils.log(buildListener, line);
             }
         }
+        cmdProc.waitFor();
+        return cmdProc.exitValue() == 0;
     }
 }
